@@ -69,20 +69,31 @@ function findMatchAndHighlight(e) {
       }
       specialFire.remove();
     } else if (typedKeys.join("") === "ice") {
-      console.log("ice logic here");
+      const specialIce = document.querySelector(".ice-cloud");
+      if (specialIce !== null) {
+        const typeWords = document.querySelectorAll(".type-word");
+
+        typeWords.forEach((div) => {
+          div.style.animationPlayState = "paused";
+          freezeWord();
+          setTimeout(() => {
+            div.style.animationPlayState = "running";
+            freezeWord();
+          }, 6000);
+        });
+      }
+      specialIce.remove();
     } else {
       // TODO: separate to different function
       matchedWords.forEach((word) => {
         if (word.innerText === typedKeys.join("")) {
           if (word.classList.contains("fire")) {
-            console.log("fire cloud");
             const specials = document.querySelector(".specials");
             const specialCloud = document.createElement("div");
             specialCloud.className = "fire-cloud";
             specialCloud.innerText = "FIRE";
             specials.appendChild(specialCloud);
           } else if (word.classList.contains("ice")) {
-            console.log("ice cloud");
             const specials = document.querySelector(".specials");
             const specialCloud = document.createElement("div");
             specialCloud.className = "ice-cloud";
@@ -127,16 +138,26 @@ function findMatchAndHighlight(e) {
   console.log(typedKeys);
 }
 
-// TODO: 1. put check and highlight functions here
-// TODO: 2. think whether this should be a keyup or keydown (keypress is deprecated);
 window.addEventListener("keyup", findMatchAndHighlight);
 
-// to show the words
-const myInterval = setInterval(() => {
+let createWordInterval = setInterval(function () {
   createWord();
 }, Math.random() * 1000 + 2000);
+let isPaused = false;
+
+function freezeWord() {
+  if (isPaused) {
+    createWordInterval = setInterval(function () {
+      createWord();
+    }, Math.random() * 1000 + 2000);
+    isPaused = false;
+  } else {
+    clearInterval(createWordInterval);
+    isPaused = true;
+  }
+}
 
 setTimeout(() => {
-  clearInterval(myInterval);
+  clearInterval(createWordInterval);
   console.log("game stopped");
 }, 30000);

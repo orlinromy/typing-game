@@ -23,7 +23,7 @@
   position: absolute;
   display: inline;
   /* margin-top: 300px; */
-  animation: descend 15s linear;
+  animation: descend 7s linear;
 }
 
 /* .type-word.animation {
