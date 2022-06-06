@@ -1,6 +1,10 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+.container {
+  height: 325px;
+  border: 1px solid black;
+}
 .highlight {
   background-color: yellow;
 }
@@ -15,9 +19,11 @@ body {
 
 @keyframes descend {
   0% {
+    /* top: 10px; */
     transform: translateY(10px);
   }
   100% {
+    /* top: 300px; */
     transform: translateY(300px);
   }
 }

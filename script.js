@@ -8,6 +8,10 @@ const commonWords = [
   "reap",
   "sow",
   "attempt",
+  "acknowledge",
+  "acquaintance",
+  "hypocrisy",
+  "inoculate",
 ];
 
 const typedKeys = [];
@@ -16,14 +20,18 @@ let prevMatchedWords = [];
 let accuracy = 0;
 let passLevelLimit = 0;
 let score = 0;
+let animationId = 0;
+let dynamicStyles = null; // (https://stackoverflow.com/questions/59573722/how-can-i-set-a-css-keyframes-in-javascript)
 
 function displayAccuracy(x) {
   const accuracy = document.querySelector(".accuracy");
-  accuracy.innerText = "Accuracy: " + x + "%";
+  accuracyDisplay = x > 100 ? 100 : x;
+  accuracy.innerText = "Accuracy: " + accuracyDisplay + "%";
 }
 function displayPassLimit(x) {
   const passLimit = document.querySelector(".pass-limit");
-  passLimit.innerText = "Pass Limit: " + x + "%";
+  limitDisplay = x > 100 ? 100 : x;
+  passLimit.innerText = "Pass Limit: " + limitDisplay + "%";
 }
 
 function displayScore(x) {
@@ -64,12 +72,25 @@ function createWord() {
 }
 
 function displayTypedKeys(typedKeys) {
-  let str = typedKeys.join("");
   const display = document.querySelector(".display");
-  display.innerHTML = `<h3>${str}<h3>`;
+  display.innerHTML = `<h3>${typedKeys.join("")}<h3>`;
+}
+
+function addAnimation(body) {
+  // if (!dynamicStyles) {
+  dynamicStyles = document.createElement("style");
+  dynamicStyles.type = "text/css";
+  document.head.appendChild(dynamicStyles);
+  // }
+
+  dynamicStyles.sheet.insertRule(body, dynamicStyles.length);
 }
 
 function findMatchAndHighlight(e) {
+  if (matchedWords.length !== 0) {
+    prevMatchedWords = [...matchedWords];
+  }
+  console.log(prevMatchedWords);
   // to remove
   if (e.key === "Backspace") {
     typedKeys.pop();
@@ -79,8 +100,8 @@ function findMatchAndHighlight(e) {
       if (specialFire !== null) {
         const container = document.querySelector(".container");
         container.innerHTML = "";
+        specialFire.remove();
       }
-      specialFire.remove();
     } else if (typedKeys.join("") === "ice") {
       const specialIce = document.querySelector(".ice-cloud");
       if (specialIce !== null) {
@@ -88,14 +109,14 @@ function findMatchAndHighlight(e) {
 
         typeWords.forEach((div) => {
           div.style.animationPlayState = "paused";
-          freezeWord();
+          toggleCreateWord();
           setTimeout(() => {
             div.style.animationPlayState = "running";
-            freezeWord();
+            toggleCreateWord();
           }, 6000);
         });
+        specialIce.remove();
       }
-      specialIce.remove();
     } else {
       // TODO: separate to different function
       matchedWords.forEach((word) => {
@@ -119,11 +140,45 @@ function findMatchAndHighlight(e) {
           displayScore(score);
           word.remove();
         } else {
-          word.classList.add("type-word-faster");
-          accuracy += 10;
+          let rect = word.getBoundingClientRect(); //https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
+          console.log(rect.top);
 
-          displayAccuracy(accuracy);
+          addAnimation(`
+            @keyframes descend-faster-${animationId} {
+              0% {
+                transform: translateY(${rect.top + 0.75}px);
+              }
+              100% {
+                transform: translateY(300px);
+              }
+            }
+          `);
+          // use class and data in css
+          word.style.animation = `descend-faster-${animationId} ${
+            (300 - rect.top + 0.75) / (((300 - 10) / 7) * 2.5)
+          }s linear`;
+          animationId++;
         }
+      });
+      prevMatchedWords.forEach((word) => {
+        let rect = word.getBoundingClientRect(); //https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
+        console.log(rect.top);
+
+        addAnimation(`
+            @keyframes descend-faster-${animationId} {
+              0% {
+                transform: translateY(${rect.top + 0.75}px);
+              }
+              100% {
+                transform: translateY(300px);
+              }
+            }
+          `);
+        // use class and data in css
+        word.style.animation = `descend-faster-${animationId} ${
+          (300 - rect.top + 0.75) / (((300 - 10) / 7) * 2.5)
+        }s linear`;
+        animationId++;
       });
     }
     matchedWords.length = 0;
@@ -135,9 +190,6 @@ function findMatchAndHighlight(e) {
   displayTypedKeys(typedKeys);
 
   const words = document.querySelectorAll(".type-word");
-  // const fireWords = document.querySelector(".fire-cloud");
-  // const iceWords = document.querySelector(".ice-cloud");
-  // const allWords = [...words, fireWords, iceWords];
   matchedWords.length = 0;
   words.forEach((word) => {
     const regex = new RegExp("^" + typedKeys.join(""), "i");
@@ -163,7 +215,8 @@ let createWordInterval = setInterval(function () {
 }, Math.random() * 1000 + 2000);
 let isPaused = false;
 
-function freezeWord() {
+// TODO: research why this part is probabilistic (source: https://stackoverflow.com/questions/21277900/how-can-i-pause-setinterval-functions)
+function toggleCreateWord() {
   if (isPaused) {
     createWordInterval = setInterval(function () {
       createWord();
@@ -178,4 +231,4 @@ function freezeWord() {
 setTimeout(() => {
   clearInterval(createWordInterval);
   console.log("game stopped");
-}, 30000);
+}, 60000);
