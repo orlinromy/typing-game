@@ -13,11 +13,21 @@ const commonWords = [
 const typedKeys = [];
 const matchedWords = [];
 let prevMatchedWords = [];
+let accuracy = 0;
+
+function displayAccuracy(x) {
+  const accuracy = document.querySelector(".accuracy");
+  accuracy.innerText = x + "%";
+}
+
+displayAccuracy(0);
 
 function animationEndHandler(e) {
   if (matchedWords.includes(e.target)) {
     matchedWords.splice(matchedWords.indexOf(e.target), 1);
   }
+  accuracy += 10;
+  displayAccuracy(accuracy);
   e.target.remove();
 }
 
@@ -48,10 +58,6 @@ function displayTypedKeys(typedKeys) {
 
 function findMatchAndHighlight(e) {
   // to remove
-  console.log("matched words");
-  matchedWords.forEach((word) => {
-    console.log(word.innerText);
-  });
   if (e.key === "Backspace") {
     typedKeys.pop();
   } else if (e.key === "Enter" || e.key === "Space") {
@@ -86,10 +92,11 @@ function findMatchAndHighlight(e) {
           word.remove();
         } else {
           word.classList.add("type-word-faster");
+          accuracy += 10;
+          displayAccuracy(accuracy);
         }
       });
     }
-
     matchedWords.length = 0;
     typedKeys.length = 0;
   } else if (/^[a-zA-Z]$/.test(e.key)) {
