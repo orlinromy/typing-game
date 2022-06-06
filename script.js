@@ -55,29 +55,40 @@ function findMatchAndHighlight(e) {
   if (e.key === "Backspace") {
     typedKeys.pop();
   } else if (e.key === "Enter" || e.key === "Space") {
-    // TODO: separate to different function
-    matchedWords.forEach((word) => {
-      if (word.innerText === typedKeys.join("")) {
-        if (word.classList.contains("fire")) {
-          console.log("fire cloud");
-          const specials = document.querySelector(".specials");
-          const specialCloud = document.createElement("div");
-          specialCloud.className = "fire-cloud";
-          specialCloud.innerText = "FIRE";
-          specials.appendChild(specialCloud);
-        } else if (word.classLIst.contains("ice")) {
-          console.log("ice cloud");
-          const specials = document.querySelector(".specials");
-          const specialCloud = document.createElement("div");
-          specialCloud.className = "ice-cloud";
-          specialCloud.innerText = "ICE";
-          specials.appendChild(specialCloud);
-        }
-        word.remove();
-      } else {
-        word.classList.add("type-word-faster");
+    if (typedKeys.join("") === "fire") {
+      const specialFire = document.querySelector(".fire-cloud");
+      if (specialFire !== null) {
+        const container = document.querySelector(".container");
+        container.innerHTML = "";
       }
-    });
+      specialFire.remove();
+    } else if (typedKeys.join("") === "ice") {
+      console.log("ice logic here");
+    } else {
+      // TODO: separate to different function
+      matchedWords.forEach((word) => {
+        if (word.innerText === typedKeys.join("")) {
+          if (word.classList.contains("fire")) {
+            console.log("fire cloud");
+            const specials = document.querySelector(".specials");
+            const specialCloud = document.createElement("div");
+            specialCloud.className = "fire-cloud";
+            specialCloud.innerText = "FIRE";
+            specials.appendChild(specialCloud);
+          } else if (word.classList.contains("ice")) {
+            console.log("ice cloud");
+            const specials = document.querySelector(".specials");
+            const specialCloud = document.createElement("div");
+            specialCloud.className = "ice-cloud";
+            specialCloud.innerText = "ICE";
+            specials.appendChild(specialCloud);
+          }
+          word.remove();
+        } else {
+          word.classList.add("type-word-faster");
+        }
+      });
+    }
 
     matchedWords.length = 0;
     typedKeys.length = 0;
