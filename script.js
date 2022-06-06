@@ -14,13 +14,26 @@ const typedKeys = [];
 const matchedWords = [];
 let prevMatchedWords = [];
 let accuracy = 0;
+let passLevelLimit = 0;
+let score = 0;
 
 function displayAccuracy(x) {
   const accuracy = document.querySelector(".accuracy");
-  accuracy.innerText = x + "%";
+  accuracy.innerText = "Accuracy: " + x + "%";
+}
+function displayPassLimit(x) {
+  const passLimit = document.querySelector(".pass-limit");
+  passLimit.innerText = "Pass Limit: " + x + "%";
 }
 
-displayAccuracy(0);
+function displayScore(x) {
+  const score = document.querySelector(".score");
+  score.innerText = "Score: " + x;
+}
+
+displayAccuracy(accuracy);
+displayPassLimit(passLevelLimit);
+displayScore(score);
 
 function animationEndHandler(e) {
   if (matchedWords.includes(e.target)) {
@@ -100,10 +113,15 @@ function findMatchAndHighlight(e) {
             specialCloud.innerText = "ICE";
             specials.appendChild(specialCloud);
           }
+          passLevelLimit += Math.round(Math.random()) + 10;
+          score += word.innerText.length * 100 + Math.round(Math.random()) + 1;
+          displayPassLimit(passLevelLimit);
+          displayScore(score);
           word.remove();
         } else {
           word.classList.add("type-word-faster");
           accuracy += 10;
+
           displayAccuracy(accuracy);
         }
       });
