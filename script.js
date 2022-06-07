@@ -23,6 +23,23 @@ let score = 0;
 let animationId = 0;
 let dynamicStyles = null; // (https://stackoverflow.com/questions/59573722/how-can-i-set-a-css-keyframes-in-javascript)
 
+const timeout = setTimeout(() => {
+  clearInterval(createWordInterval);
+  console.log("game stopped");
+}, 60000);
+
+function checkAccuracy() {
+  if (accuracy >= 100) {
+    console.log("stop game because accuracy limit is hit");
+    const typeWords = document.querySelectorAll(".type-word");
+    typeWords.forEach((word) => word.remove());
+    clearTimeout(timeout);
+    clearInterval(createWordInterval);
+    const display = document.querySelector(".display");
+    display.innerHTML = `<h3>GAME OVER</h3>`;
+  }
+}
+
 function displayAccuracy(x) {
   const accuracy = document.querySelector(".accuracy");
   accuracyDisplay = x > 100 ? 100 : x;
@@ -49,6 +66,7 @@ function animationEndHandler(e) {
   }
   accuracy += 10;
   displayAccuracy(accuracy);
+  checkAccuracy();
   e.target.remove();
 }
 
@@ -176,13 +194,14 @@ function findMatchAndHighlight(e) {
           `);
         // use class and data in css
         word.style.animation = `descend-faster-${animationId} ${
-          (300 - rect.top + 0.75) / (((300 - 10) / 7) * 2.5)
+          (300 - rect.top - 0.75) / (((300 - 10) / 7) * 2.5)
         }s linear`;
         animationId++;
       });
     }
     matchedWords.length = 0;
     typedKeys.length = 0;
+    checkAccuracy();
   } else if (/^[a-zA-Z]$/.test(e.key)) {
     typedKeys.push(e.key);
   }
@@ -211,14 +230,16 @@ function findMatchAndHighlight(e) {
 window.addEventListener("keyup", findMatchAndHighlight);
 
 let createWordInterval = setInterval(function () {
+  checkAccuracy();
   createWord();
-}, Math.random() * 1000 + 2000);
+}, Math.random() * 1000 + 500);
 let isPaused = false;
 
 // TODO: research why this part is probabilistic (source: https://stackoverflow.com/questions/21277900/how-can-i-pause-setinterval-functions)
 function toggleCreateWord() {
   if (isPaused) {
     createWordInterval = setInterval(function () {
+      checkAccuracy();
       createWord();
     }, Math.random() * 1000 + 2000);
     isPaused = false;
@@ -227,8 +248,3 @@ function toggleCreateWord() {
     isPaused = true;
   }
 }
-
-setTimeout(() => {
-  clearInterval(createWordInterval);
-  console.log("game stopped");
-}, 60000);
