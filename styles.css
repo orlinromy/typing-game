@@ -2,7 +2,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 .container {
-  height: 325px;
+  height: 525px;
   border: 1px solid black;
 }
 .highlight {
@@ -24,7 +24,7 @@ body {
   }
   100% {
     /* top: 300px; */
-    transform: translateY(300px);
+    transform: translateY(500px);
   }
 }
 
@@ -32,7 +32,7 @@ body {
   position: absolute;
   display: inline;
   /* margin-top: 300px; */
-  animation: descend 7s linear;
+  animation: descend 15s linear;
 }
 
 /* .type-word.animation {
