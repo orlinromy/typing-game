@@ -3,7 +3,8 @@ body {
 }
 .container {
   height: 525px;
-  border: 1px solid black;
+  transition: 8s ease-out;
+  /* border: 1px solid black; */
 }
 .highlight {
   background-color: yellow;
@@ -17,13 +18,23 @@ body {
   color: cadetblue;
 }
 
+.heal {
+  color: olivedrab;
+}
+
+.slow {
+  color: goldenrod;
+}
+.slow-down {
+  transition: 5s linear;
+  transform: translateY(-100px);
+}
+
 @keyframes descend {
   0% {
-    /* top: 10px; */
     transform: translateY(10px);
   }
   100% {
-    /* top: 300px; */
     transform: translateY(500px);
   }
 }
@@ -31,25 +42,6 @@ body {
 .type-word {
   position: absolute;
   display: inline;
-  /* margin-top: 300px; */
+  transition: 5s linear;
   animation: descend 15s linear;
 }
-
-/* .type-word.animation {
-  -webkit-transition: 15s;
-  -moz-transition: 15s;
-  -ms-transition: 15s;
-  -o-transition: 15s;
-  transition: 15s;
-  transition-timing-function: linear;
-  margin-top: 300px !important;
-} */
-
-/* .faster-animation {
-  -webkit-transition: 7s;
-  -moz-transition: 7s;
-  -ms-transition: 7s;
-  -o-transition: 7s;
-  transition: margin-top 7s;
-  margin-top: 300px;
-} */

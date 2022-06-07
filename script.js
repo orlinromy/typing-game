@@ -3,6 +3,8 @@ const commonWords = [
   "burn",
   "plain",
   "collect",
+  "collective",
+  "collecting",
   "structure",
   "clam",
   "eggnog",
@@ -139,6 +141,7 @@ const commonWords = [
   "shallow",
   "scarf",
   "immense",
+  "immersive",
   "ray",
   "null",
   "repair",
@@ -761,7 +764,6 @@ const commonWords = [
   "permit",
   "chubby",
   "motionless",
-  "fire",
   "tie",
   "hair",
   "elderly",
@@ -1331,7 +1333,6 @@ const commonWords = [
   "top",
   "play",
   "language",
-  "heal",
   "string",
   "son",
   "wonderful",
@@ -1423,7 +1424,6 @@ const commonWords = [
   "connect",
   "vacation",
   "grab",
-  "slow",
   "painful",
   "identify",
   "resonant",
@@ -1615,7 +1615,6 @@ const commonWords = [
   "draconian",
   "trees",
   "romantic",
-  "ice",
   "unpack",
   "decision",
   "can",
@@ -1638,6 +1637,7 @@ const commonWords = [
   "choke",
   "miniature",
   "thankful",
+  "thankfully",
   "windy",
   "explain",
   "rapid",
@@ -1708,6 +1708,7 @@ const commonWords = [
   "pie",
   "sheet",
   "icky",
+  "icy",
   "living",
   "cars",
   "awake",
@@ -2143,6 +2144,16 @@ let minMaxLength = {
   30: { min: 6, max: 12 },
 };
 let iceTimeout = null;
+let slowTimeout = null;
+let isSlow = false;
+
+// function startGame() {
+
+// }
+
+// function popup() {
+
+// }
 
 function checkAccuracy() {
   if (accuracy >= 100) {
@@ -2164,7 +2175,8 @@ function checkAccuracy() {
     passLevelLimit = 0;
     accuracy = 0;
     level++;
-
+    // popup();
+    // startGame()
     displayLevel(level);
     displayAccuracy(accuracy);
     displayPassLimit(passLevelLimit);
@@ -2219,17 +2231,20 @@ function createWordDiv(level) {
   let selectWord = commonWords.filter(
     (word) => word.length <= maxLength && word.length >= minLength
   );
-  console.log("selected word length: ", selectWord.length);
   const container = document.querySelector(".container");
   const word = document.createElement("div");
   word.style.left = Math.random() * 200 + "px";
   word.style.marginTop = "10px";
   word.className = "type-word";
   let randomizeSpecialCloud = Math.random();
-  if (randomizeSpecialCloud < 0.25) {
+  if (randomizeSpecialCloud < 0.1) {
     word.classList.add("fire");
-  } else if (randomizeSpecialCloud < 0.5) {
+  } else if (randomizeSpecialCloud < 0.2) {
     word.classList.add("ice");
+  } else if (randomizeSpecialCloud < 0.3) {
+    word.classList.add("heal");
+  } else if (randomizeSpecialCloud < 0.4) {
+    word.classList.add("slow");
   }
   word.innerText = selectWord[Math.floor(Math.random() * selectWord.length)];
   word.addEventListener("animationend", animationEndHandler);
@@ -2251,11 +2266,39 @@ function addAnimation(body) {
   dynamicStyles.sheet.insertRule(body, dynamicStyles.length);
 }
 
+function createSpecialClouds(wordClassName) {
+  const specials = document.querySelector(".specials");
+  if (specials.children.length < 8) {
+    const specialCloud = document.createElement("div");
+    specialCloud.className = `${wordClassName}-cloud`;
+    specialCloud.innerText = wordClassName.toUpperCase();
+    specials.appendChild(specialCloud);
+  }
+}
+
+function fasterDropSpeed(word) {
+  let rect = word.getBoundingClientRect(); //https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
+  console.log(word.animationDuration);
+  addAnimation(`
+            @keyframes descend-faster-${animationId} {
+              0% {
+                transform: translateY(${rect.top - 0.75}px);
+              }
+              100% {
+                transform: translateY(500px);
+              }
+            }
+          `);
+  word.style.animation = `descend-faster-${animationId} ${
+    (500 - rect.top + 0.75) / (((500 - 10) / 15) * 2.5)
+  }s linear`;
+  animationId++;
+}
 function findMatchAndHighlight(e) {
   if (matchedWords.length !== 0) {
     prevMatchedWords = [...matchedWords];
   }
-  // to remove
+
   if (e.key === "Backspace") {
     typedKeys.pop();
   } else if (e.key === "Enter" || e.key === "Space") {
@@ -2295,26 +2338,28 @@ function findMatchAndHighlight(e) {
         }, 6000);
         specialIce.remove();
       }
+    } else if (typedKeys.join("") === "heal") {
+      accuracy = 0;
+      displayAccuracy(accuracy);
+    } else if (typedKeys.join("") === "slow") {
+      console.log("slow logic here");
+      const container = document.querySelector(".container");
+      container.classList.add("slow-down");
+      setTimeout(() => {
+        container.classList.remove("slow-down");
+      }, 5000);
     } else {
       // TODO: separate to different function
       matchedWords.forEach((word) => {
         if (word.innerText === typedKeys.join("")) {
           if (word.classList.contains("fire")) {
-            const specials = document.querySelector(".specials");
-            if (specials.children.length < 8) {
-              const specialCloud = document.createElement("div");
-              specialCloud.className = "fire-cloud";
-              specialCloud.innerText = "FIRE";
-              specials.appendChild(specialCloud);
-            }
+            createSpecialClouds("fire");
           } else if (word.classList.contains("ice")) {
-            const specials = document.querySelector(".specials");
-            if (specials.children.length < 8) {
-              const specialCloud = document.createElement("div");
-              specialCloud.className = "ice-cloud";
-              specialCloud.innerText = "ICE";
-              specials.appendChild(specialCloud);
-            }
+            createSpecialClouds("ice");
+          } else if (word.classList.contains("slow")) {
+            createSpecialClouds("slow");
+          } else if (word.classList.contains("heal")) {
+            createSpecialClouds("heal");
           }
           passLevelLimit += Math.round(Math.random()) + 10;
           score += word.innerText.length * 100 + Math.round(Math.random()) + 1;
@@ -2322,42 +2367,11 @@ function findMatchAndHighlight(e) {
           displayScore(score);
           word.remove();
         } else {
-          let rect = word.getBoundingClientRect(); //https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
-
-          addAnimation(`
-            @keyframes descend-faster-${animationId} {
-              0% {
-                transform: translateY(${rect.top + 0.75}px);
-              }
-              100% {
-                transform: translateY(500px);
-              }
-            }
-          `);
-          // use class and data in css
-          word.style.animation = `descend-faster-${animationId} ${
-            (500 - rect.top + 0.75) / (((500 - 10) / 7) * 2.5)
-          }s linear`;
-          animationId++;
+          fasterDropSpeed(word);
         }
       });
       prevMatchedWords.forEach((word) => {
-        let rect = word.getBoundingClientRect(); //https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
-
-        addAnimation(`
-            @keyframes descend-faster-${animationId} {
-              0% {
-                transform: translateY(${rect.top + 0.75}px);
-              }
-              100% {
-                transform: translateY(500px);
-              }
-            }
-          `);
-        word.style.animation = `descend-faster-${animationId} ${
-          (500 - rect.top - 0.75) / (((500 - 10) / 7) * 2.5)
-        }s linear`;
-        animationId++;
+        fasterDropSpeed(word);
       });
     }
     matchedWords.length = 0;
@@ -2390,7 +2404,6 @@ function findMatchAndHighlight(e) {
 window.addEventListener("keyup", findMatchAndHighlight);
 
 let createWordInterval = setInterval(function () {
-  // checkAccuracy();
   createWordDiv(level);
 }, Math.random() * 500 + 1000);
 let isPaused = false;
@@ -2399,7 +2412,6 @@ let isPaused = false;
 function toggleCreateWord() {
   if (isPaused) {
     createWordInterval = setInterval(function () {
-      // checkAccuracy();
       createWordDiv(level);
     }, Math.random() * 500 + 1000);
     isPaused = false;
