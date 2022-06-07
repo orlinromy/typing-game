@@ -22,28 +22,44 @@ let passLevelLimit = 0;
 let score = 0;
 let animationId = 0;
 let dynamicStyles = null; // (https://stackoverflow.com/questions/59573722/how-can-i-set-a-css-keyframes-in-javascript)
-
-const timeout = setTimeout(() => {
-  clearInterval(createWordInterval);
-  console.log("game stopped");
-}, 60000);
+let level = 1;
+let iceTimeout = null;
 
 function checkAccuracy() {
   if (accuracy >= 100) {
     console.log("stop game because accuracy limit is hit");
     const typeWords = document.querySelectorAll(".type-word");
     typeWords.forEach((word) => word.remove());
-    clearTimeout(timeout);
     clearInterval(createWordInterval);
     const display = document.querySelector(".display");
     display.innerHTML = `<h3>GAME OVER</h3>`;
   }
+  if (passLevelLimit >= 100) {
+    toggleCreateWord();
+    const typeWords = document.querySelectorAll(".type-word");
+    typeWords.forEach((word) => word.remove());
+
+    setTimeout(() => {
+      toggleCreateWord();
+    }, 5000);
+    passLevelLimit = 0;
+    accuracy = 0;
+    level++;
+    displayLevel(level);
+    displayAccuracy(accuracy);
+    displayPassLimit(passLevelLimit);
+  }
+}
+
+function displayLevel(x) {
+  const level = document.querySelector(".level");
+  level.innerText = "Level " + x;
 }
 
 function displayAccuracy(x) {
   const accuracy = document.querySelector(".accuracy");
   accuracyDisplay = x > 100 ? 100 : x;
-  accuracy.innerText = "Accuracy: " + accuracyDisplay + "%";
+  accuracy.innerText = "Accuracy Penalty: " + accuracyDisplay + "%";
 }
 function displayPassLimit(x) {
   const passLimit = document.querySelector(".pass-limit");
@@ -90,8 +106,8 @@ function createWord() {
 }
 
 function displayTypedKeys(typedKeys) {
-  const display = document.querySelector(".display");
-  display.innerHTML = `<h3>${typedKeys.join("")}<h3>`;
+  const typedWord = document.querySelector(".typed-word");
+  typedWord.innerHTML = typedKeys.join("");
 }
 
 function addAnimation(body) {
@@ -125,14 +141,28 @@ function findMatchAndHighlight(e) {
       if (specialIce !== null) {
         const typeWords = document.querySelectorAll(".type-word");
 
+        // if the iceTimeout is triggered before
+        if (iceTimeout !== null) {
+          clearTimeout(iceTimeout);
+          typeWords.forEach((div) => {
+            if (div.style.animationPlayState === "paused") {
+              div.style.animationPlayState = "running";
+            }
+          });
+        }
+        if (!isPaused) {
+          toggleCreateWord();
+        }
+
         typeWords.forEach((div) => {
           div.style.animationPlayState = "paused";
-          toggleCreateWord();
-          setTimeout(() => {
-            div.style.animationPlayState = "running";
-            toggleCreateWord();
-          }, 6000);
         });
+        iceTimeout = setTimeout(() => {
+          typeWords.forEach((div) => {
+            div.style.animationPlayState = "running";
+          });
+          toggleCreateWord();
+        }, 6000);
         specialIce.remove();
       }
     } else {
@@ -141,16 +171,20 @@ function findMatchAndHighlight(e) {
         if (word.innerText === typedKeys.join("")) {
           if (word.classList.contains("fire")) {
             const specials = document.querySelector(".specials");
-            const specialCloud = document.createElement("div");
-            specialCloud.className = "fire-cloud";
-            specialCloud.innerText = "FIRE";
-            specials.appendChild(specialCloud);
+            if (specials.children.length < 8) {
+              const specialCloud = document.createElement("div");
+              specialCloud.className = "fire-cloud";
+              specialCloud.innerText = "FIRE";
+              specials.appendChild(specialCloud);
+            }
           } else if (word.classList.contains("ice")) {
             const specials = document.querySelector(".specials");
-            const specialCloud = document.createElement("div");
-            specialCloud.className = "ice-cloud";
-            specialCloud.innerText = "ICE";
-            specials.appendChild(specialCloud);
+            if (specials.children.length < 8) {
+              const specialCloud = document.createElement("div");
+              specialCloud.className = "ice-cloud";
+              specialCloud.innerText = "ICE";
+              specials.appendChild(specialCloud);
+            }
           }
           passLevelLimit += Math.round(Math.random()) + 10;
           score += word.innerText.length * 100 + Math.round(Math.random()) + 1;
@@ -203,7 +237,7 @@ function findMatchAndHighlight(e) {
     typedKeys.length = 0;
     checkAccuracy();
   } else if (/^[a-zA-Z]$/.test(e.key)) {
-    typedKeys.push(e.key);
+    typedKeys.push(e.key.toLowerCase());
   }
 
   displayTypedKeys(typedKeys);
@@ -230,18 +264,18 @@ function findMatchAndHighlight(e) {
 window.addEventListener("keyup", findMatchAndHighlight);
 
 let createWordInterval = setInterval(function () {
-  checkAccuracy();
+  // checkAccuracy();
   createWord();
-}, Math.random() * 1000 + 500);
+}, Math.random() * 1000 + 1000);
 let isPaused = false;
 
 // TODO: research why this part is probabilistic (source: https://stackoverflow.com/questions/21277900/how-can-i-pause-setinterval-functions)
 function toggleCreateWord() {
   if (isPaused) {
     createWordInterval = setInterval(function () {
-      checkAccuracy();
+      // checkAccuracy();
       createWord();
-    }, Math.random() * 1000 + 2000);
+    }, Math.random() * 1000 + 1000);
     isPaused = false;
   } else {
     clearInterval(createWordInterval);
