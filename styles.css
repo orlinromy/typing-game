@@ -55,8 +55,7 @@ body {
 
 .popup {
   width: 20%;
-  /* height: 150px; */
-  background-color: blanchedalmond;
+  background-color: #ffebcd;
   border-radius: 6px;
   position: absolute;
   top: 0;
@@ -64,6 +63,7 @@ body {
   transform: translate(-50%, -50%) scale(0.1);
   text-align: center;
   visibility: hidden;
+  box-shadow: 3px 3px #e9a43d;
   transition: transform 0.4s ease-out, visibility 0.3s ease-in,
     top 0.3s ease-out;
 }

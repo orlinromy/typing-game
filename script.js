@@ -2148,8 +2148,18 @@ let slowTimeout = null;
 let isSlow = false;
 let createWordInterval = null;
 let isPaused = false;
+let isGameOver = false;
 
 function startGame() {
+  console.log("fired");
+  if (isGameOver) {
+    isGameOver = false;
+    level = 0;
+    createWordInterval = null;
+    score = 0;
+    const specials = document.querySelector(".specials");
+    specials.innerHTML = "";
+  }
   window.addEventListener("keyup", findMatchAndHighlight);
   if (createWordInterval === null) {
     createWordInterval = setInterval(function () {
@@ -2168,17 +2178,29 @@ function startGame() {
   displayScore(score);
 }
 
-function openPopup() {
+function openPopup(isGameOver) {
   if (iceTimeout !== null || slowTimeout !== null) {
     iceTimeout = null;
     slowTimeout = null;
   }
   const popup = document.querySelector(".popup");
   popup.classList.add("open-popup");
-
   const h3 = popup.querySelector(".level");
-  h3.innerText = "Level " + (level + 1);
-  if (level === 0) {
+
+  if (isGameOver) {
+    h3.innerText = "GAME OVER";
+    const cntBtn = document.querySelector(".front");
+    cntBtn.innerText = "PLAY AGAIN";
+  } else if (level === 0) {
+    h3.innerText = "TYPING...";
+    const p = document.createElement("p");
+    p.className = "instruction";
+    p.innerHTML = `<span class="fire">FIRE</span>: remove all words<br /><span class="ice">ICE</span>: freezes all words<br /><span class="heal">HEAL</span>: resets accuracy penalty<br /><span class="slow">SLOW</span>: slow the drop speed<br />`;
+    popup.append(p);
+  } else {
+    h3.innerText = "Level " + (level + 1);
+    // const instruction = document.querySelector(".instruction");
+    // instruction.remove();
   }
 
   const popupBtn = document.querySelector(".continue-btn");
@@ -2189,15 +2211,20 @@ function openPopup() {
 function closePopup() {
   const popup = document.querySelector(".popup");
   popup.classList.remove("open-popup");
+  const popupBtn = document.querySelector(".continue-btn");
+  popupBtn.removeEventListener("click", closePopup);
+  window.removeEventListener("keyup", closePopupSpace);
   startGame();
 }
+
 function closePopupSpace(e) {
   if (e.code === "Space") {
     closePopup();
   }
 }
 
-openPopup();
+openPopup(isGameOver);
+
 // TODO: research why this part is probabilistic (source: https://stackoverflow.com/questions/21277900/how-can-i-pause-setinterval-functions)
 function toggleCreateWord() {
   if (isPaused) {
@@ -2216,15 +2243,19 @@ function checkAccuracy() {
     const typeWords = document.querySelectorAll(".type-word");
     typeWords.forEach((word) => word.remove());
     clearInterval(createWordInterval);
+    isGameOver = true;
+    openPopup(isGameOver);
     const display = document.querySelector(".display");
-    display.innerHTML = `<h3>GAME OVER</h3>`;
+    const level = display.querySelector(".level");
+    level.innerText = "GAME OVER";
+    window.removeEventListener("keyup", findMatchAndHighlight);
   }
   if (passLevelLimit >= 100) {
     toggleCreateWord();
     const typeWords = document.querySelectorAll(".type-word");
     typeWords.forEach((word) => word.remove());
+    openPopup(isGameOver);
     window.removeEventListener("keyup", findMatchAndHighlight);
-    openPopup();
   }
 }
 
@@ -2302,12 +2333,10 @@ function displayTypedKeys(typedKeys) {
   typedWord.innerHTML = typedKeys.join("");
 }
 
-function addAnimation(body) {
+function addAnimation(anim) {
   dynamicStyles = document.createElement("style");
-  dynamicStyles.type = "text/css";
   document.head.appendChild(dynamicStyles);
-
-  dynamicStyles.sheet.insertRule(body, dynamicStyles.length);
+  dynamicStyles.sheet.insertRule(anim, dynamicStyles.length);
 }
 
 function createSpecialClouds(wordClassName) {
@@ -2322,7 +2351,6 @@ function createSpecialClouds(wordClassName) {
 
 function fasterDropSpeed(word) {
   let rect = word.getBoundingClientRect(); //https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
-  console.log(word.animationDuration);
   addAnimation(`
             @keyframes descend-faster-${animationId} {
               0% {
@@ -2424,7 +2452,9 @@ function findMatchAndHighlight(e) {
         }
       });
       prevMatchedWords.forEach((word) => {
-        fasterDropSpeed(word);
+        if (!matchedWords.includes(word)) {
+          fasterDropSpeed(word);
+        }
       });
     }
     matchedWords.length = 0;
