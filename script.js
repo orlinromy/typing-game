@@ -2110,7 +2110,7 @@ let passLevelLimit = 0;
 let score = 0;
 let animationId = 0;
 let dynamicStyles = null; // (https://stackoverflow.com/questions/59573722/how-can-i-set-a-css-keyframes-in-javascript)
-let level = 1;
+let level = 0;
 let minMaxLength = {
   1: { min: 3, max: 4 },
   2: { min: 3, max: 5 },
@@ -2146,14 +2146,70 @@ let minMaxLength = {
 let iceTimeout = null;
 let slowTimeout = null;
 let isSlow = false;
+let createWordInterval = null;
+let isPaused = false;
 
-// function startGame() {
+function startGame() {
+  window.addEventListener("keyup", findMatchAndHighlight);
+  if (createWordInterval === null) {
+    createWordInterval = setInterval(function () {
+      createWordDiv(level);
+    }, Math.random() * 750 + 300);
+  } else if (isPaused) {
+    toggleCreateWord();
+  }
+  passLevelLimit = 0;
+  accuracy = 0;
+  level++;
 
-// }
+  displayLevel(level);
+  displayAccuracy(accuracy);
+  displayPassLimit(passLevelLimit);
+  displayScore(score);
+}
 
-// function popup() {
+function openPopup() {
+  if (iceTimeout !== null || slowTimeout !== null) {
+    iceTimeout = null;
+    slowTimeout = null;
+  }
+  const popup = document.querySelector(".popup");
+  popup.classList.add("open-popup");
 
-// }
+  const h3 = popup.querySelector(".level");
+  h3.innerText = "Level " + (level + 1);
+  if (level === 0) {
+  }
+
+  const popupBtn = document.querySelector(".continue-btn");
+  popupBtn.addEventListener("click", closePopup);
+  window.addEventListener("keyup", closePopupSpace);
+}
+
+function closePopup() {
+  const popup = document.querySelector(".popup");
+  popup.classList.remove("open-popup");
+  startGame();
+}
+function closePopupSpace(e) {
+  if (e.code === "Space") {
+    closePopup();
+  }
+}
+
+openPopup();
+// TODO: research why this part is probabilistic (source: https://stackoverflow.com/questions/21277900/how-can-i-pause-setinterval-functions)
+function toggleCreateWord() {
+  if (isPaused) {
+    createWordInterval = setInterval(function () {
+      createWordDiv(level);
+    }, Math.random() * 750 + 300);
+    isPaused = false;
+  } else {
+    clearInterval(createWordInterval);
+    isPaused = true;
+  }
+}
 
 function checkAccuracy() {
   if (accuracy >= 100) {
@@ -2168,18 +2224,7 @@ function checkAccuracy() {
     const typeWords = document.querySelectorAll(".type-word");
     typeWords.forEach((word) => word.remove());
     window.removeEventListener("keyup", findMatchAndHighlight);
-    setTimeout(() => {
-      toggleCreateWord();
-      window.addEventListener("keyup", findMatchAndHighlight);
-    }, 5000);
-    passLevelLimit = 0;
-    accuracy = 0;
-    level++;
-    // popup();
-    // startGame()
-    displayLevel(level);
-    displayAccuracy(accuracy);
-    displayPassLimit(passLevelLimit);
+    openPopup();
   }
 }
 
@@ -2195,7 +2240,7 @@ function displayAccuracy(x) {
 }
 function displayPassLimit(x) {
   const passLimit = document.querySelector(".pass-limit");
-  limitDisplay = x > 100 ? 100 : x;
+  limitDisplay = x > 100 ? 100 : parseInt(x);
   passLimit.innerText = "Pass Limit: " + limitDisplay + "%";
 }
 
@@ -2203,10 +2248,6 @@ function displayScore(x) {
   const score = document.querySelector(".score");
   score.innerText = "Score: " + x;
 }
-
-displayAccuracy(accuracy);
-displayPassLimit(passLevelLimit);
-displayScore(score);
 
 function animationEndHandler(e) {
   if (matchedWords.includes(e.target)) {
@@ -2235,6 +2276,8 @@ function createWordDiv(level) {
   const word = document.createElement("div");
   word.style.left = Math.random() * 200 + "px";
   word.style.marginTop = "10px";
+  let duration = 15 / (1 + level / 50);
+  word.style.animationDuration = duration + "s";
   word.className = "type-word";
   let randomizeSpecialCloud = Math.random();
   if (randomizeSpecialCloud < 0.1) {
@@ -2246,6 +2289,7 @@ function createWordDiv(level) {
   } else if (randomizeSpecialCloud < 0.4) {
     word.classList.add("slow");
   }
+
   word.innerText = selectWord[Math.floor(Math.random() * selectWord.length)];
   word.addEventListener("animationend", animationEndHandler);
   container.appendChild(word);
@@ -2282,15 +2326,16 @@ function fasterDropSpeed(word) {
   addAnimation(`
             @keyframes descend-faster-${animationId} {
               0% {
-                transform: translateY(${rect.top - 0.75}px);
+                transform: translateY(${rect.top - 1}px);
               }
               100% {
                 transform: translateY(500px);
               }
             }
           `);
+  let duration = 15 / (1 + level / 50);
   word.style.animation = `descend-faster-${animationId} ${
-    (500 - rect.top + 0.75) / (((500 - 10) / 15) * 2.5)
+    (500 - rect.top + 1) / (((500 - 10) / duration) * 3)
   }s linear`;
   animationId++;
 }
@@ -2301,7 +2346,7 @@ function findMatchAndHighlight(e) {
 
   if (e.key === "Backspace") {
     typedKeys.pop();
-  } else if (e.key === "Enter" || e.key === "Space") {
+  } else if (e.key === "Enter") {
     if (typedKeys.join("") === "fire") {
       const specialFire = document.querySelector(".fire-cloud");
       if (specialFire !== null) {
@@ -2339,15 +2384,23 @@ function findMatchAndHighlight(e) {
         specialIce.remove();
       }
     } else if (typedKeys.join("") === "heal") {
-      accuracy = 0;
-      displayAccuracy(accuracy);
+      const specialHeal = document.querySelector(".heal-cloud");
+      if (specialHeal !== null) {
+        accuracy = 0;
+        displayAccuracy(accuracy);
+      }
+      specialHeal.remove();
     } else if (typedKeys.join("") === "slow") {
-      console.log("slow logic here");
-      const container = document.querySelector(".container");
-      container.classList.add("slow-down");
-      setTimeout(() => {
-        container.classList.remove("slow-down");
-      }, 5000);
+      const specialSlow = document.querySelector(".slow-cloud");
+      if (specialSlow !== null) {
+        console.log("slow logic here");
+        const container = document.querySelector(".container");
+        container.classList.add("slow-down");
+        setTimeout(() => {
+          container.classList.remove("slow-down");
+        }, 5000);
+      }
+      specialSlow.remove();
     } else {
       // TODO: separate to different function
       matchedWords.forEach((word) => {
@@ -2361,7 +2414,7 @@ function findMatchAndHighlight(e) {
           } else if (word.classList.contains("heal")) {
             createSpecialClouds("heal");
           }
-          passLevelLimit += Math.round(Math.random()) + 10;
+          passLevelLimit += Math.round(Math.random()) + 10 / (1 + level / 40);
           score += word.innerText.length * 100 + Math.round(Math.random()) + 1;
           displayPassLimit(passLevelLimit);
           displayScore(score);
@@ -2399,24 +2452,4 @@ function findMatchAndHighlight(e) {
       matchedWords.push(word);
     }
   });
-}
-
-window.addEventListener("keyup", findMatchAndHighlight);
-
-let createWordInterval = setInterval(function () {
-  createWordDiv(level);
-}, Math.random() * 500 + 1000);
-let isPaused = false;
-
-// TODO: research why this part is probabilistic (source: https://stackoverflow.com/questions/21277900/how-can-i-pause-setinterval-functions)
-function toggleCreateWord() {
-  if (isPaused) {
-    createWordInterval = setInterval(function () {
-      createWordDiv(level);
-    }, Math.random() * 500 + 1000);
-    isPaused = false;
-  } else {
-    clearInterval(createWordInterval);
-    isPaused = true;
-  }
 }

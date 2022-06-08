@@ -43,5 +43,58 @@ body {
   position: absolute;
   display: inline;
   transition: 5s linear;
-  animation: descend 15s linear;
+  animation-name: descend;
+  animation-timing-function: linear;
+  animation-duration: 15s;
+}
+
+.remove-word-animate {
+  display: none;
+  transition: display 0.5s;
+}
+
+.popup {
+  width: 20%;
+  /* height: 150px; */
+  background-color: blanchedalmond;
+  border-radius: 6px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.1);
+  text-align: center;
+  visibility: hidden;
+  transition: transform 0.4s ease-out, visibility 0.3s ease-in,
+    top 0.3s ease-out;
+}
+.popup p {
+  font-size: 12px;
+  font-style: italic;
+  padding: 1em;
+}
+.open-popup {
+  visibility: visible;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+}
+.continue-btn {
+  background: hsl(340deg 100% 32%);
+  border-radius: 12px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 7px;
+}
+.front {
+  display: block;
+  padding: 8px 20px;
+  letter-spacing: 2px;
+  border-radius: 12px;
+  background: hsl(345deg 100% 47%);
+  color: white;
+  transform: translateY(-6px);
+}
+
+.continue-btn:active .front {
+  transform: translateY(-2px);
 }
