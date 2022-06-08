@@ -935,7 +935,7 @@ const commonWords = [
   "plants",
   "wrist",
   "vulgar",
-  "FALSE",
+  "false",
   "sassy",
   "dime",
   "unequaled",
@@ -2149,6 +2149,8 @@ let isSlow = false;
 let createWordInterval = null;
 let isPaused = false;
 let isGameOver = false;
+let wordTimeout = null;
+let selectWord = [];
 
 function startGame() {
   console.log("fired");
@@ -2163,25 +2165,35 @@ function startGame() {
   window.addEventListener("keyup", findMatchAndHighlight);
   if (createWordInterval === null) {
     createWordInterval = setInterval(function () {
-      createWordDiv(level);
-    }, Math.random() * 750 + 300);
+      wordTimeout = setTimeout(() => {
+        createWordDiv(level);
+      }, Math.random() * 500);
+    }, 600);
   } else if (isPaused) {
     toggleCreateWord();
   }
   passLevelLimit = 0;
   accuracy = 0;
   level++;
-
+  selectWord = getSelectedWord(level);
   displayLevel(level);
   displayAccuracy(accuracy);
   displayPassLimit(passLevelLimit);
   displayScore(score);
 }
+function openOverlay() {
+  const overlay = document.querySelector(".overlay");
+  overlay.classList.add("overlay-on");
+}
+function removeOverlay() {
+  const overlay = document.querySelector(".overlay");
+  overlay.classList.remove("overlay-on");
+}
 
 function openPopup(isGameOver) {
   if (iceTimeout !== null || slowTimeout !== null) {
-    iceTimeout = null;
-    slowTimeout = null;
+    clearTimeout(iceTimeout);
+    clearTimeout(slowTimeout);
   }
   const popup = document.querySelector(".popup");
   popup.classList.add("open-popup");
@@ -2191,18 +2203,20 @@ function openPopup(isGameOver) {
     h3.innerText = "GAME OVER";
     const cntBtn = document.querySelector(".front");
     cntBtn.innerText = "PLAY AGAIN";
+    const instruction = document.querySelector(".instruction");
+    if (instruction !== null) {
+      instruction.remove();
+    }
   } else if (level === 0) {
-    h3.innerText = "TYPING...";
-    const p = document.createElement("p");
-    p.className = "instruction";
-    p.innerHTML = `<span class="fire">FIRE</span>: remove all words<br /><span class="ice">ICE</span>: freezes all words<br /><span class="heal">HEAL</span>: resets accuracy penalty<br /><span class="slow">SLOW</span>: slow the drop speed<br />`;
-    popup.append(p);
+    h3.innerText = "astrotype";
   } else {
     h3.innerText = "Level " + (level + 1);
-    // const instruction = document.querySelector(".instruction");
-    // instruction.remove();
+    const instruction = document.querySelector(".instruction");
+    if (instruction !== null) {
+      instruction.remove();
+    }
   }
-
+  openOverlay();
   const popupBtn = document.querySelector(".continue-btn");
   popupBtn.addEventListener("click", closePopup);
   window.addEventListener("keyup", closePopupSpace);
@@ -2212,6 +2226,7 @@ function closePopup() {
   const popup = document.querySelector(".popup");
   popup.classList.remove("open-popup");
   const popupBtn = document.querySelector(".continue-btn");
+  removeOverlay();
   popupBtn.removeEventListener("click", closePopup);
   window.removeEventListener("keyup", closePopupSpace);
   startGame();
@@ -2229,11 +2244,14 @@ openPopup(isGameOver);
 function toggleCreateWord() {
   if (isPaused) {
     createWordInterval = setInterval(function () {
-      createWordDiv(level);
-    }, Math.random() * 750 + 300);
+      wordTimeout = setTimeout(() => {
+        createWordDiv(level);
+      }, Math.random() * 500);
+    }, 600);
     isPaused = false;
   } else {
     clearInterval(createWordInterval);
+    clearTimeout(wordTimeout);
     isPaused = true;
   }
 }
@@ -2243,11 +2261,9 @@ function checkAccuracy() {
     const typeWords = document.querySelectorAll(".type-word");
     typeWords.forEach((word) => word.remove());
     clearInterval(createWordInterval);
+    clearTimeout(wordTimeout);
     isGameOver = true;
     openPopup(isGameOver);
-    const display = document.querySelector(".display");
-    const level = display.querySelector(".level");
-    level.innerText = "GAME OVER";
     window.removeEventListener("keyup", findMatchAndHighlight);
   }
   if (passLevelLimit >= 100) {
@@ -2260,7 +2276,8 @@ function checkAccuracy() {
 }
 
 function displayLevel(x) {
-  const level = document.querySelector(".level");
+  const display = document.querySelector(".display");
+  const level = display.querySelector(".level");
   level.innerText = "Level " + x;
 }
 
@@ -2290,7 +2307,7 @@ function animationEndHandler(e) {
   e.target.remove();
 }
 
-function createWordDiv(level) {
+function getSelectedWord(level) {
   let minLength = 0;
   let maxLength = 0;
   if (level > 30) {
@@ -2300,14 +2317,16 @@ function createWordDiv(level) {
     minLength = minMaxLength[level].min;
     maxLength = minMaxLength[level].max;
   }
-  let selectWord = commonWords.filter(
+  const selectWord = commonWords.filter(
     (word) => word.length <= maxLength && word.length >= minLength
   );
+  return selectWord;
+}
+function createWordDiv(level) {
   const container = document.querySelector(".container");
   const word = document.createElement("div");
-  word.style.left = Math.random() * 200 + "px";
-  word.style.marginTop = "10px";
-  let duration = 15 / (1 + level / 50);
+  word.style.left = Math.random() * 430 + 10 + "px";
+  let duration = 13 / (1 + level / 50) - Math.random() * 3;
   word.style.animationDuration = duration + "s";
   word.className = "type-word";
   let randomizeSpecialCloud = Math.random();
@@ -2320,8 +2339,12 @@ function createWordDiv(level) {
   } else if (randomizeSpecialCloud < 0.4) {
     word.classList.add("slow");
   }
-
-  word.innerText = selectWord[Math.floor(Math.random() * selectWord.length)];
+  let index = Math.floor(Math.random() * selectWord.length);
+  word.innerText = selectWord[index];
+  selectWord.splice(index, 1);
+  if (selectWord.length === 0) {
+    selectWord = getSelectedWord(level);
+  }
   word.addEventListener("animationend", animationEndHandler);
   container.appendChild(word);
 
@@ -2361,7 +2384,7 @@ function fasterDropSpeed(word) {
               }
             }
           `);
-  let duration = 15 / (1 + level / 50);
+  let duration = 13 / (1 + level / 50);
   word.style.animation = `descend-faster-${animationId} ${
     (500 - rect.top + 1) / (((500 - 10) / duration) * 3)
   }s linear`;
@@ -2407,7 +2430,9 @@ function findMatchAndHighlight(e) {
           typeWords.forEach((div) => {
             div.style.animationPlayState = "running";
           });
-          toggleCreateWord();
+          if (isPaused) {
+            toggleCreateWord();
+          }
         }, 6000);
         specialIce.remove();
       }
@@ -2421,9 +2446,9 @@ function findMatchAndHighlight(e) {
     } else if (typedKeys.join("") === "slow") {
       const specialSlow = document.querySelector(".slow-cloud");
       if (specialSlow !== null) {
-        console.log("slow logic here");
         const container = document.querySelector(".container");
         container.classList.add("slow-down");
+        console.log(container.style);
         setTimeout(() => {
           container.classList.remove("slow-down");
         }, 5000);

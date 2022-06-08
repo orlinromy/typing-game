@@ -8,26 +8,61 @@
     <link rel="stylesheet" href="styles.css" crossorigin="anonymous" />
   </head>
   <body>
-    <div class="stars">
+    <!-- <div class="stars">
       <div class="stars-back"></div>
       <div class="stars-middle"></div>
-    </div>
-    <div class="container"></div>
-    <div class="display">
-      <div class="level-display"><h3 class="level"></h3></div>
-      <div class="score"></div>
-      <div class="specials"></div>
-      <div class="pass-limit"></div>
-      <div class="accuracy"></div>
-    </div>
-    <h3 class="typed-word"></h3>
+    </div> -->
+
     <!-- creating a popup from: https://www.youtube.com/watch?v=AF6vGYIyV8M&ab_channel=EasyTutorials -->
-    <div class="popup">
-      <h3 class="level">Level 1</h3>
-      <button type="submit" class="continue-btn">
-        <span class="front">START</span>
-      </button>
-      <p>Click the button or press Space to continue</p>
+
+    <div class="overlay">
+      <div class="popup" style="font-family: Poppins">
+        <img class="popup-image" src="assets/1981.jpg" />
+        <h3 class="level" style="font-weight: 700; font-size: 24px">Level 1</h3>
+
+        <p class="instruction">
+          <span style="text-decoration: underline">INSTRUCTION</span>
+          <br />
+          Clear the words by typing and press Enter to submit. <br />
+          You have 10 lives.
+          <br />
+          <br />
+          Special Words:
+          <br />
+          <span class="fire">🔥FIRE</span>: remove all words<br /><span
+            class="ice"
+            >🧊ICE</span
+          >: freezes all words<br /><span class="heal">❤️‍🩹HEAL</span>: resets
+          lives<br /><span class="slow">🐢SLOW</span>: slow the drop speed<br /><br />
+          Type "<span class="fire">FIRE</span>", "<span class="ice">ICE</span>",
+          "<span class="heal">HEAL</span>", or "<span class="slow">SLOW</span>"
+          to use them. You can only have 7 special abilities stacked at one
+          time.
+        </p>
+        <button type="submit" class="continue-btn">
+          <span class="front">START</span>
+        </button>
+        <p class="cont">Click the button or press Space to continue</p>
+      </div>
+    </div>
+    <div class="game-area">
+      <div class="game">
+        <div class="parent-container">
+          <div class="container"></div>
+        </div>
+        <div class="input-area">
+          <h3 class="typed-word"></h3>
+        </div>
+      </div>
+      <div class="display">
+        <div class="level-display">
+          <h3 class="level"></h3>
+        </div>
+        <div class="score"></div>
+        <div class="specials"></div>
+        <div class="pass-limit"></div>
+        <div class="accuracy"></div>
+      </div>
     </div>
 
     <script src="script.js" charset="utf-8"></script>

@@ -1,13 +1,65 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;700&display=swap");
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
   height: 99vh;
-  color: white;
+  margin: 0;
+}
+
+.overlay {
+  display: block;
+  visibility: hidden;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3;
+  background-color: rgba(0, 0, 0, 0.7);
+  transition: visibility 0.3s ease-out;
+}
+.overlay-on {
+  visibility: visible;
+}
+.game-area {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 70vw;
+  height: 75vh;
+}
+
+.parent-container {
+  /* border: 10px solid #f3bf3a; */
+  border-radius: 10px;
+  background-color: rgba(256, 256, 256, 0.4);
+  height: 525px;
+  margin-top: 30px;
+  flex: 1 0 30%;
+  z-index: 2;
+  margin-bottom: 20px;
 }
 .container {
+  position: absolute;
   height: 525px;
-  transition: 8s ease-out;
-  /* border: 1px solid black; */
+  width: 500px;
+  transition: transform 13s linear;
+}
+.display {
+  display: inline-block;
+  flex: 1 0 10%;
+  background-color: blanchedalmond;
+  margin-left: 20px;
+  margin-top: 30px;
+  border: 10px solid #f3bf3a;
+  border-radius: 10px;
+}
+.input-area {
+  width: 500px;
+  height: 40px;
+  text-align: center;
+  background-color: white;
+  border-radius: 10px;
 }
 .highlight {
   background-color: yellow;
@@ -29,17 +81,8 @@ body {
   color: goldenrod;
 }
 .slow-down {
-  transition: 5s linear;
-  transform: translateY(-100px);
-}
-
-@keyframes descend {
-  0% {
-    transform: translateY(10px);
-  }
-  100% {
-    transform: translateY(500px);
-  }
+  transition: 7s linear;
+  transform: translateY(-120px);
 }
 
 .type-word {
@@ -48,18 +91,20 @@ body {
   animation-name: descend;
   animation-timing-function: linear;
   animation-duration: 15s;
-  /* box-shadow: rgba(250, 250, 255, 0.2) 0px 7px 29px 0px; */
+  transition: transform 8s linear;
   padding: 3px 2px;
   border-radius: 5px;
+  z-index: 1;
+  color: #090a0f;
 }
 
-.remove-word-animate {
+/* .remove-word-animate {
   display: none;
   transition: display 0.5s;
-}
-
+} */
+/* https://www.youtube.com/watch?v=AF6vGYIyV8M&ab_channel=EasyTutorials */
 .popup {
-  width: 20%;
+  width: 35%;
   background-color: #ffebcd;
   border-radius: 6px;
   position: absolute;
@@ -68,19 +113,32 @@ body {
   transform: translate(-50%, -50%) scale(0.1);
   text-align: center;
   visibility: hidden;
-  box-shadow: 3px 3px #e9a43d;
+  box-shadow: 5px 5px #e9a43d;
   transition: transform 0.4s ease-out, visibility 0.3s ease-in,
     top 0.3s ease-out;
 }
-.popup p {
-  font-size: 12px;
+.level > .popup {
+  margin: 12px;
+}
+.cont {
+  font-size: 0.7em;
   font-style: italic;
   padding: 1em;
 }
+.instruction {
+  padding: 1em;
+  font-size: 0.9em;
+}
 .open-popup {
   visibility: visible;
-  top: 50%;
+  top: 55%;
   transform: translate(-50%, -50%) scale(1);
+}
+.popup-image {
+  margin-top: -20%;
+  border-radius: 50%;
+  width: 100px;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
 }
 .continue-btn {
   background: hsl(340deg 100% 32%);
@@ -105,15 +163,9 @@ body {
 }
 
 /* background from: https://codepen.io/JDoe/pen/QxvgOZ */
-/* .space {
-  position: relative;
-  display: block;
-  width: 100%;
-  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-  padding-top: 100vh;
-} */
 
 .stars > div {
+  /* > selects all elements with class "stars" where the parent is a <div> element */
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -157,5 +209,16 @@ body {
   }
   100% {
     top: 0;
+  }
+}
+
+@keyframes descend {
+  0% {
+    /* top: -20px; */
+    transform: translateY(-20px);
+  }
+  100% {
+    /* top: 500px; */
+    transform: translateY(500px);
   }
 }
