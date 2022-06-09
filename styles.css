@@ -67,13 +67,29 @@ body {
 .highlight {
   background-color: yellow;
 }
+.fire-cloud {
+  animation: blink 0.15s steps(2, start);
+  animation-iteration-count: 2;
+}
+.ice-cloud {
+  animation: blink 0.15s steps(2, start);
+  animation-iteration-count: 2;
+}
+.heal-cloud {
+  animation: blink 0.15s steps(2, start);
+  animation-iteration-count: 2;
+}
+.slow-cloud {
+  animation: blink 0.15s steps(2, start);
+  animation-iteration-count: 2;
+}
 
 .fire {
   color: red !important;
 }
 
 .ice {
-  color: cadetblue !important;
+  color: #008080 !important;
 }
 
 .heal {
@@ -81,7 +97,7 @@ body {
 }
 
 .slow {
-  color: goldenrod !important;
+  color: darkorchid !important;
 }
 .slow-down {
   transition: 7s linear;
@@ -226,7 +242,7 @@ body {
   border-radius: 20px;
   text-align: center;
   margin: 0 auto;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 7.5px;
 }
 
 .bar {

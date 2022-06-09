@@ -278,6 +278,7 @@ function createSpecialClouds(wordClassName) {
   if (specials.children.length < 8) {
     const specialCloud = document.createElement("div");
     specialCloud.className = `${wordClassName}-cloud`;
+    specialCloud.classList.add(wordClassName);
     specialCloud.innerText = wordClassName.toUpperCase();
     specials.appendChild(specialCloud);
   }
