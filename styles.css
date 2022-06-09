@@ -69,19 +69,19 @@ body {
 }
 
 .fire {
-  color: red;
+  color: red !important;
 }
 
 .ice {
-  color: cadetblue;
+  color: cadetblue !important;
 }
 
 .heal {
-  color: olivedrab;
+  color: olivedrab !important;
 }
 
 .slow {
-  color: goldenrod;
+  color: goldenrod !important;
 }
 .slow-down {
   transition: 7s linear;
