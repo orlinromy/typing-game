@@ -14,7 +14,7 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: 3;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   transition: visibility 0.3s ease-out;
 }
 .overlay-on {
@@ -32,7 +32,7 @@ body {
 .parent-container {
   /* border: 10px solid #f3bf3a; */
   border-radius: 10px;
-  background-color: rgba(256, 256, 256, 0.4);
+  background-color: rgba(256, 256, 256, 0.7);
   height: 525px;
   margin-top: 30px;
   flex: 1 0 30%;
@@ -46,13 +46,16 @@ body {
   transition: transform 13s linear;
 }
 .display {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
   width: 35%;
   background-color: blanchedalmond;
   margin-left: 20px;
   margin-top: 30px;
   border: 10px solid #f3bf3a;
   border-radius: 10px;
+  text-align: center;
 }
 .input-area {
   width: 500px;
@@ -98,10 +101,6 @@ body {
   color: #090a0f;
 }
 
-/* .remove-word-animate {
-  display: none;
-  transition: display 0.5s;
-} */
 /* https://www.youtube.com/watch?v=AF6vGYIyV8M&ab_channel=EasyTutorials */
 .popup {
   width: 35%;
@@ -222,10 +221,11 @@ body {
 }
 
 .pass-limit-container {
-  width: 80%;
+  width: 90%;
   background-color: white;
   border-radius: 20px;
   text-align: center;
+  margin: 0 auto;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
@@ -233,4 +233,21 @@ body {
   background-color: #348e8a;
   border-radius: 20px;
   transition: width 0.5s ease;
+}
+
+.switch {
+  width: 23px;
+  display: none;
+  margin: 2px;
+}
+
+.switch-off {
+  animation: blink 0.15s steps(2, start);
+  animation-iteration-count: 2;
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
 }

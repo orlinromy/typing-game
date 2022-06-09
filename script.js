@@ -67,6 +67,7 @@ function startGame() {
   } else if (isPaused) {
     toggleCreateWord();
   }
+  typedKeys.length = 0;
   passLevelLimit = 0;
   accuracy = 0;
   level++;
@@ -152,12 +153,14 @@ function toggleCreateWord() {
 }
 
 function checkAccuracy() {
-  if (accuracy >= 100) {
+  if (accuracy >= 10) {
     const typeWords = document.querySelectorAll(".type-word");
     typeWords.forEach((word) => word.remove());
     clearInterval(createWordInterval);
     clearTimeout(wordTimeout);
     isGameOver = true;
+    const typedWords = document.querySelector(".typed-word");
+    typedWords.innerText = "";
     openPopup(isGameOver);
     window.removeEventListener("keyup", findMatchAndHighlight);
   }
@@ -177,10 +180,21 @@ function displayLevel(x) {
 }
 
 function displayAccuracy(x) {
-  const accuracy = document.querySelector(".accuracy");
-  accuracyDisplay = x > 100 ? 100 : x;
-  accuracy.innerText = "Accuracy Penalty: " + accuracyDisplay + "%";
+  const accuracyDiv = document.querySelector(".accuracy");
+  if (x !== 0) {
+    const switchImg = accuracyDiv.querySelector("#img-" + accuracy);
+    switchImg.src = "assets/switch-off.png";
+    switchImg.classList.add("switch-off");
+  } else if (x === 0 || isGameOver) {
+    const switches = document.querySelectorAll(".switch");
+    switches.forEach((switchItem) => {
+      switchItem.style.display = "inline";
+      switchItem.src = "assets/switch-on.png";
+      switchItem.classList.remove("switch-off");
+    });
+  }
 }
+
 function displayPassLimit(x) {
   const passLimit = document.querySelector(".pass-limit-num");
   limitDisplay = x > 100 ? 100 : parseInt(x);
@@ -198,7 +212,7 @@ function animationEndHandler(e) {
   if (matchedWords.includes(e.target)) {
     matchedWords.splice(matchedWords.indexOf(e.target), 1);
   }
-  accuracy += 10;
+  accuracy += 1;
   displayAccuracy(accuracy);
   checkAccuracy();
   e.target.remove();
@@ -223,7 +237,7 @@ function createWordDiv(level) {
   const container = document.querySelector(".container");
   const word = document.createElement("div");
   word.style.left = Math.random() * 430 + 10 + "px";
-  let duration = 13 / (1 + level / 50) - Math.random() * 3;
+  let duration = 13 / (1 + level / 25) - Math.random() * 3;
   word.style.animationDuration = duration + "s";
   word.className = "type-word";
   let randomizeSpecialCloud = Math.random();
@@ -281,7 +295,7 @@ function fasterDropSpeed(word) {
               }
             }
           `);
-  let duration = 13 / (1 + level / 50);
+  let duration = 13 / (1 + level / 25);
   word.style.animation = `descend-faster-${animationId} ${
     (500 - rect.top + 1) / (((500 - 10) / duration) * 3)
   }s linear`;
