@@ -55,7 +55,7 @@ function startGame() {
     createWordInterval = null;
     score = 0;
     const specials = document.querySelector(".specials");
-    specials.innerHTML = "";
+    specials.innerHTML = "<div>SPECIALS</div>";
   }
   window.addEventListener("keyup", findMatchAndHighlight);
   if (createWordInterval === null) {

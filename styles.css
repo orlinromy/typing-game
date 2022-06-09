@@ -267,3 +267,12 @@ body {
     visibility: hidden;
   }
 }
+
+.specials {
+  font-family: Poppins;
+  height: 200px;
+  background-color: #d5d0aa;
+  border-radius: 20px;
+  margin: 0px 10%;
+  padding: 20px;
+}
