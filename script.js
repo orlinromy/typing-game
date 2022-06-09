@@ -309,13 +309,16 @@ function findMatchAndHighlight(e) {
 
   if (e.key === "Backspace") {
     typedKeys.pop();
-  } else if (e.key === "Enter") {
+  } else if (e.key === "Enter" || e.code === "Space") {
     if (typedKeys.join("") === "fire") {
       const specialFire = document.querySelector(".fire-cloud");
       if (specialFire !== null) {
         const container = document.querySelector(".container");
         container.innerHTML = "";
-        specialFire.remove();
+        specialFire.classList.add("remove-element");
+        setTimeout(() => {
+          specialFire.remove();
+        }, 1000);
       }
     } else if (typedKeys.join("") === "ice") {
       const specialIce = document.querySelector(".ice-cloud");
@@ -346,7 +349,10 @@ function findMatchAndHighlight(e) {
             toggleCreateWord();
           }
         }, 6000);
-        specialIce.remove();
+        specialIce.classList.add("remove-element");
+        setTimeout(() => {
+          specialIce.remove();
+        }, 1000);
       }
     } else if (typedKeys.join("") === "heal") {
       const specialHeal = document.querySelector(".heal-cloud");
@@ -354,7 +360,10 @@ function findMatchAndHighlight(e) {
         accuracy = 0;
         displayAccuracy(accuracy);
       }
-      specialHeal.remove();
+      specialHeal.classList.add("remove-element");
+      setTimeout(() => {
+        specialHeal.remove();
+      }, 1000);
     } else if (typedKeys.join("") === "slow") {
       const specialSlow = document.querySelector(".slow-cloud");
       if (specialSlow !== null) {
@@ -365,7 +374,10 @@ function findMatchAndHighlight(e) {
           container.classList.remove("slow-down");
         }, 5000);
       }
-      specialSlow.remove();
+      specialSlow.classList.add("remove-element");
+      setTimeout(() => {
+        specialSlow.remove();
+      }, 1000);
     } else {
       // TODO: separate to different function
       matchedWords.forEach((word) => {

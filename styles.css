@@ -276,3 +276,24 @@ body {
   margin: 0px 10%;
   padding: 20px;
 }
+
+@keyframes fade {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.remove-element {
+  animation: fade 1s ease;
+}
