@@ -134,8 +134,6 @@ function closePopupSpace(e) {
   }
 }
 
-openPopup(isGameOver);
-
 // TODO: research why this part is probabilistic (source: https://stackoverflow.com/questions/21277900/how-can-i-pause-setinterval-functions)
 function toggleCreateWord() {
   if (isPaused) {
@@ -432,3 +430,5 @@ function findMatchAndHighlight(e) {
     }
   });
 }
+
+openPopup(isGameOver);
