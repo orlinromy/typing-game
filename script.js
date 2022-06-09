@@ -2,7 +2,7 @@ const typedKeys = [];
 const matchedWords = [];
 let prevMatchedWords = [];
 let accuracy = 0;
-let passLevelLimit = 0;
+let passLevelLimit = 20;
 let score = 0;
 let animationId = 0;
 let dynamicStyles = null; // (https://stackoverflow.com/questions/59573722/how-can-i-set-a-css-keyframes-in-javascript)
@@ -182,9 +182,11 @@ function displayAccuracy(x) {
   accuracy.innerText = "Accuracy Penalty: " + accuracyDisplay + "%";
 }
 function displayPassLimit(x) {
-  const passLimit = document.querySelector(".pass-limit");
+  const passLimit = document.querySelector(".pass-limit-num");
   limitDisplay = x > 100 ? 100 : parseInt(x);
-  passLimit.innerText = "Pass Limit: " + limitDisplay + "%";
+  passLimit.innerText = limitDisplay + "%";
+  const passLimitBar = document.querySelector(".bar");
+  passLimitBar.style.width = limitDisplay + "%";
 }
 
 function displayScore(x) {
