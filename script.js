@@ -1,5 +1,3 @@
-import { commonWords } from "./words.js";
-
 const typedKeys = [];
 const matchedWords = [];
 let prevMatchedWords = [];

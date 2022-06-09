@@ -1,4 +1,4 @@
-export const commonWords = [
+const commonWords = [
   "purple",
   "burn",
   "plain",
