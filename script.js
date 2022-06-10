@@ -7,7 +7,7 @@ let score = 0;
 let animationId = 0;
 let dynamicStyles = null; // (https://stackoverflow.com/questions/59573722/how-can-i-set-a-css-keyframes-in-javascript)
 let level = 0;
-let minMaxLength = {
+const minMaxLength = {
   1: { min: 3, max: 4 },
   2: { min: 3, max: 5 },
   3: { min: 3, max: 6 },

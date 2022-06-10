@@ -177,56 +177,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* background from: https://codepen.io/JDoe/pen/QxvgOZ */
-
-.stars > div {
-  /* > selects all elements with class "stars" where the parent is a <div> element */
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-.stars .stars-back {
-  top: -50%;
-  opacity: 0.5;
-  background-image: radial-gradient(
-      2px 2px at 20px 30px,
-      #eee,
-      rgba(0, 0, 0, 0)
-    ),
-    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 90px 40px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0, 0, 0, 0));
-  background-repeat: repeat;
-  background-size: 150px 150px;
-  animation: stars 10s infinite linear;
-}
-
-.stars .stars-middle {
-  background-image: radial-gradient(
-      3px 3px at 50px 160px,
-      #ddd,
-      rgba(0, 0, 0, 0)
-    ),
-    radial-gradient(2px 2px at 90px 40px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 130px 80px, #fff, rgba(0, 0, 0, 0));
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  animation: stars 15s infinite linear;
-}
-
-@keyframes stars {
-  0% {
-    top: -100%;
-  }
-  100% {
-    top: 0;
-  }
-}
-
 @keyframes descend {
   0% {
     transform: translateY(-20px);
