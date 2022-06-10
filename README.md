@@ -38,9 +38,9 @@ To use these special abilities, you can type "FIRE", "ICE", "HEAL", and "SLOW" a
 
 ## Learning Points
 
-1. Dynamic styling is used to store additional keyframes, which can be used to alter the animation. I thought I can just modify the `animation-duration` to create the speeding up effect for the falling word, but the animation resets and the word fall from the top of the screen instead of continuing from where it was.
+Dynamic styling is used to store additional keyframes, which can be used to alter the animation. I thought I can just modify the `animation-duration` to create the speeding up effect for the falling word, but the animation resets and the word fall from the top of the screen instead of continuing from where it was.
 
-2. However, for the slow function in the game, dynamic styling might not be helpful because: 1. I need to slow down newly created words, too, 2. The words have to return back to its original falling speed. In CSS animation, you can animate the container to one direction at a faster pace and the element in the container to the other direction at a slower pace to make it seems like it slows down. In my case, I animated `.container` div which contains `.type-word` (the words that user need to type) to the opposite direction at a slower pace from the `.type-word` to achieve the slowing down effect.
+However, for the slow function in the game, dynamic styling might not be helpful because: 1. I need to slow down newly created words, too, 2. The words have to return back to its original falling speed. In CSS animation, you can animate the container to one direction at a faster pace and the element in the container to the other direction at a slower pace to make it seems like it slows down. In my case, I animated `.container` div which contains `.type-word` (the words that user need to type) to the opposite direction at a slower pace from the `.type-word` to achieve the slowing down effect.
 
 More research will definitely be needed to effectively
 
