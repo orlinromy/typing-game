@@ -7,6 +7,7 @@ let score = 0;
 let animationId = 0;
 let dynamicStyles = null; // (https://stackoverflow.com/questions/59573722/how-can-i-set-a-css-keyframes-in-javascript)
 let level = 0;
+let isSlowMode = false;
 const minMaxLength = {
   1: { min: 3, max: 4 },
   2: { min: 3, max: 5 },
@@ -238,6 +239,10 @@ function createWordDiv(level) {
   let duration = 13 / (1 + level / 25) - Math.random() * 3;
   word.style.animationDuration = duration + "s";
   word.className = "type-word";
+  if (isSlowMode) {
+    // word.classList.add("slow-type-word");
+    word.style.animationDuration = "30s";
+  }
   let randomizeSpecialCloud = Math.random();
   if (randomizeSpecialCloud < 0.1) {
     word.classList.add("fire");
@@ -365,11 +370,62 @@ function findMatchAndHighlight(e) {
     } else if (typedKeys.join("") === "slow") {
       const specialSlow = document.querySelector(".slow-cloud");
       if (specialSlow !== null) {
-        const container = document.querySelector(".container");
-        container.classList.add("slow-down");
-        console.log(container.style);
+        // const container = document.querySelector(".container");
+        // container.classList.add("slow-down");
+        // console.log(container.style);
+        // setTimeout(() => {
+        //   container.classList.remove("slow-down");
+        // }, 5000);
+        isSlowMode = true;
+        const allWords = document.querySelectorAll(".type-word");
+        console.log("allWords length: ", allWords.length);
+        allWords.forEach((word) => {
+          if (!word.style.animation.includes("descend-faster")) {
+            let rect = word.getBoundingClientRect();
+            addAnimation(`
+            @keyframes descend-slower-${animationId} {
+              0% {
+                transform: translateY(${rect.top - 25}px);
+              }
+              100% {
+                transform: translateY(500px);
+              }
+            }
+          `);
+            let duration = 13 / (1 + level / 25);
+            let slowDuration =
+              (500 - rect.top + 1) / ((500 - 10) / duration / 3);
+            word.style.animation = `descend-slower-${animationId} ${slowDuration}s linear`;
+            animationId++;
+
+            // word.style.animationDuration = "50s";
+          }
+        });
         setTimeout(() => {
-          container.classList.remove("slow-down");
+          isSlowMode = false;
+          const moreWords = document.querySelectorAll(".type-word");
+          console.log("moreWords length: ", moreWords.length);
+          moreWords.forEach((word) => {
+            console.log("remove slow");
+            if (!word.style.animation.includes("descend-faster")) {
+              let rect = word.getBoundingClientRect();
+              addAnimation(`
+              @keyframes descend-normal-${animationId} {
+                0% {
+                  transform: translateY(${rect.top - 25}px);
+                }
+                100% {
+                  transform: translateY(500px);
+                }
+              }
+            `);
+              let duration = 13 / (1 + level / 25);
+              word.style.animation = `descend-normal-${animationId} ${
+                (500 - rect.top + 1) / ((500 - 10) / duration)
+              }s linear`;
+              animationId++;
+            }
+          });
         }, 5000);
       }
       specialSlow.classList.add("remove-element");

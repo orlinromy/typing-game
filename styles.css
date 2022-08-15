@@ -65,7 +65,7 @@ body {
   border-radius: 10px;
 }
 .highlight {
-  background-color: yellow;
+  background-color: gold;
 }
 .fire-cloud {
   animation: blink 0.15s steps(2, start);
@@ -101,7 +101,7 @@ body {
 }
 .slow-down {
   transition: 7s linear;
-  transform: translateY(-120px);
+  /* transform: translateY(-120px); */
 }
 
 .type-word {
@@ -111,8 +111,10 @@ body {
   animation-timing-function: linear;
   animation-duration: 15s;
   transition: transform 8s linear;
-  padding: 3px 2px;
+  padding: 5px 10px;
+  border: solid 0.5px grey;
   border-radius: 5px;
+  background-color: antiquewhite;
   z-index: 1;
   color: #090a0f;
 }
@@ -178,9 +180,6 @@ body {
 }
 
 @keyframes descend {
-  0% {
-    transform: translateY(-20px);
-  }
   100% {
     transform: translateY(500px);
   }
