@@ -209,6 +209,7 @@ body {
 .switch-off {
   animation: blink 0.15s steps(2, start);
   animation-iteration-count: 2;
+  filter: opacity(0.5);
 }
 
 @keyframes blink {

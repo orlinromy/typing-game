@@ -232,12 +232,17 @@ function getSelectedWord(level) {
   );
   return selectWord;
 }
+
+function getLeveDuration(level) {
+  return 13 / (1 + level / 25);
+}
+
 function createWordDiv(level) {
   const container = document.querySelector(".container");
   const word = document.createElement("div");
-  word.style.left = Math.random() * 430 + 10 + "px";
-  let duration = 13 / (1 + level / 25) - Math.random() * 3;
-  word.style.animationDuration = duration + "s";
+  word.style.left = Math.random() * 440 + "px";
+  const wordFallDuration = getLeveDuration(level) - Math.random() * 3;
+  word.style.animationDuration = wordFallDuration + "s";
   word.className = "type-word";
   if (isSlowMode) {
     // word.classList.add("slow-type-word");
@@ -299,9 +304,9 @@ function fasterDropSpeed(word) {
               }
             }
           `);
-  let duration = 13 / (1 + level / 25);
+  // let duration = 13 / (1 + level / 25);
   word.style.animation = `descend-faster-${animationId} ${
-    (500 - rect.top + 1) / (((500 - 10) / duration) * 3)
+    (500 - rect.top + 1) / (((500 - 10) / getLeveDuration(level)) * 3)
   }s linear`;
   animationId++;
 }
@@ -392,9 +397,9 @@ function findMatchAndHighlight(e) {
               }
             }
           `);
-            let duration = 13 / (1 + level / 25);
+            // let duration = 13 / (1 + level / 25);
             let slowDuration =
-              (500 - rect.top + 1) / ((500 - 10) / duration / 3);
+              (500 - rect.top + 1) / ((500 - 10) / getLeveDuration(level) / 3);
             word.style.animation = `descend-slower-${animationId} ${slowDuration}s linear`;
             animationId++;
 
@@ -419,9 +424,9 @@ function findMatchAndHighlight(e) {
                 }
               }
             `);
-              let duration = 13 / (1 + level / 25);
+              // let duration = 13 / (1 + level / 25);
               word.style.animation = `descend-normal-${animationId} ${
-                (500 - rect.top + 1) / ((500 - 10) / duration)
+                (500 - rect.top + 1) / ((500 - 10) / getLeveDuration(level))
               }s linear`;
               animationId++;
             }
