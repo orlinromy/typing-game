@@ -240,7 +240,7 @@ function getLeveDuration(level) {
 function createWordDiv(level) {
   const container = document.querySelector(".container");
   const word = document.createElement("div");
-  word.style.left = Math.random() * 440 + "px";
+  word.style.left = Math.random() * 410 + "px";
   const wordFallDuration = getLeveDuration(level) - Math.random() * 3;
   word.style.animationDuration = wordFallDuration + "s";
   word.className = "type-word";
